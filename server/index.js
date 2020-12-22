@@ -1,5 +1,7 @@
-/*
+require('dotenv').config();
 const { ApolloServer, gql } = require('apollo-server');
+const pgp = require('pg-promise')();
+const db = pgp(process.env.DB_URL);
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -7,36 +9,33 @@ const { ApolloServer, gql } = require('apollo-server');
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
 
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
+  type Post {
     title: String
     author: String
+    content: String
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
+    posts: [Post]
   }
 `;
 
-const books = [
+const [posts] = [
     {
-      title: 'The Awakening',
-      author: 'Kate Chopin',
+      title: 'Test',
+      author: 'anon',
+      content: 'This is a test.',
     },
     {
-      title: 'City of Glass',
-      author: 'Paul Auster',
+      title: 'Hello World!',
+      author: 'anon',
+      content: 'This is also a test.',
     },
   ];
 
-// Resolvers define the technique for fetching the types defined in the
-// schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
     Query: {
-      books: () => books,
+      posts: () => posts,
     },
   };
 
@@ -48,4 +47,3 @@ const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
-*/
